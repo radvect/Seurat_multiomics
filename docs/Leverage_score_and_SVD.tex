@@ -1,0 +1,209 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\documentclass[
+]{article}
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+% fallback for those not using the hyperref driver hyperxmp:
+\makeatletter
+\@ifundefined{xmpquote}{\newcommand{\xmpquote}[1]{#1}}{}
+\makeatother
+\hypersetup{
+  pdftitle={Leverage Score and SVD},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Leverage Score and SVD}
+\author{}
+\date{\vspace{-2.5em}}
+
+\begin{document}
+\maketitle
+
+\subsection{Motivation}\label{motivation}
+
+Working with large single-cell datasets can be computationally
+expensive. To reduce computational complexity, we can select a
+representative subset of cells using \textbf{leverage score sampling}.
+
+Consider the matrix:
+
+\[
+X =
+\begin{pmatrix}
+10 & 0 \\
+10 & 0 \\
+10 & 0 \\
+0 & 10
+\end{pmatrix}
+\]
+
+Each row represents a cell, and each column represents a gene.
+
+The first three cells are identical, while the fourth represents a
+different expression pattern.
+
+If we want to retain only two cells, it would be reasonable to select
+one of the first three cells and the fourth cell.
+
+\textbf{Main idea:} Use Singular Value Decomposition (SVD) to identify
+the contribution of each cell to the linear structure of the dataset.
+
+\subsection{1. Singular Value
+Decomposition}\label{singular-value-decomposition}
+
+Any real matrix can be decomposed as:
+
+\[
+\boxed{X = U\Sigma V^T}
+\]
+
+where:
+
+\begin{itemize}
+\tightlist
+\item
+  \(U\) contains the left singular vectors.
+\item
+  \(\Sigma\) is a diagonal matrix containing singular values.
+\item
+  \(V\) contains the right singular vectors.
+\end{itemize}
+
+\subsubsection{Step 1: Computing the singular
+values}\label{step-1-computing-the-singular-values}
+
+Calculate:
+
+\[
+X^TX
+\]
+
+Find its eigenvalues:
+
+\[
+X^TXv_i=\lambda_i v_i
+\]
+
+The singular values are:
+
+\[
+\boxed{\sigma_i=\sqrt{\lambda_i}}
+\]
+
+Arrange these values in decreasing order along the diagonal of
+\(\Sigma\).
+
+\subsubsection{Step 2: Computing V}\label{step-2-computing-v}
+
+The columns of \(V\) are the normalized eigenvectors of \(X^TX\),
+ordered according to the singular values.
+
+\[
+V=(v_1,v_2,\ldots,v_r)
+\]
+
+\subsubsection{Step 3: Computing U}\label{step-3-computing-u}
+
+Using:
+
+\[
+XV=U\Sigma
+\]
+
+we obtain:
+
+\[
+\boxed{U=XV\Sigma^{-1}}
+\]
+
+for the nonzero singular values.
+
+\subsection{2. Computing leverage
+scores}\label{computing-leverage-scores}
+
+For the rank-\(k\) approximation, take the first \(k\) columns of \(U\).
+
+The leverage score of cell \(i\) is:
+
+\[
+\boxed{\ell_i=\sum_{j=1}^{k}U_{ij}^{2}}
+\]
+
+This is the squared Euclidean norm of row \(i\) of \(U_k\).
+
+A high leverage score indicates that the cell contributes strongly to
+the selected singular subspace.
+
+\subsection{3. Sampling cells}\label{sampling-cells}
+
+We can use leverage scores to define sampling probabilities:
+
+\[
+\boxed{p_i=\frac{\ell_i}{\sum_j \ell_j}=\frac{\ell_i}{k}}
+\]
+
+Cells with higher leverage scores are more likely to be selected.
+
+This helps preserve important directions of variation and can improve
+the representation of rare cell populations.
+
+However, rare cells are not guaranteed to have high leverage scores,
+especially if their characteristic directions are excluded from the
+rank-\(k\) approximation.
+
+\end{document}

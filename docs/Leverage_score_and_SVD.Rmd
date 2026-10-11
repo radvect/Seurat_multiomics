@@ -1,0 +1,118 @@
+---
+title: "Leverage Score and SVD"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+## Motivation
+
+Working with large single-cell datasets can be computationally expensive. To reduce computational complexity, we can select a representative subset of cells using **leverage score sampling**.
+
+Consider the matrix:
+
+$$
+X =
+\begin{pmatrix}
+10 & 0 \\
+10 & 0 \\
+10 & 0 \\
+0 & 10
+\end{pmatrix}
+$$
+
+Each row represents a cell, and each column represents a gene.
+
+The first three cells are identical, while the fourth represents a different expression pattern.
+
+If we want to retain only two cells, it would be reasonable to select one of the first three cells and the fourth cell.
+
+**Main idea:** Use Singular Value Decomposition (SVD) to identify the contribution of each cell to the linear structure of the dataset.
+
+## 1. Singular Value Decomposition
+
+Any real matrix can be decomposed as:
+
+$$
+\boxed{X = U\Sigma V^T}
+$$
+
+where:
+
+- $U$ contains the left singular vectors.
+- $\Sigma$ is a diagonal matrix containing singular values.
+- $V$ contains the right singular vectors.
+
+### Step 1: Computing the singular values
+
+Calculate:
+
+$$
+X^TX
+$$
+
+Find its eigenvalues:
+
+$$
+X^TXv_i=\lambda_i v_i
+$$
+
+The singular values are:
+
+$$
+\boxed{\sigma_i=\sqrt{\lambda_i}}
+$$
+
+Arrange these values in decreasing order along the diagonal of $\Sigma$.
+
+### Step 2: Computing V
+
+The columns of $V$ are the normalized eigenvectors of $X^TX$, ordered according to the singular values.
+
+$$
+V=(v_1,v_2,\ldots,v_r)
+$$
+
+### Step 3: Computing U
+
+Using:
+
+$$
+XV=U\Sigma
+$$
+
+we obtain:
+
+$$
+\boxed{U=XV\Sigma^{-1}}
+$$
+
+for the nonzero singular values.
+
+## 2. Computing leverage scores
+
+For the rank-$k$ approximation, take the first $k$ columns of $U$.
+
+The leverage score of cell $i$ is:
+
+$$
+\boxed{\ell_i=\sum_{j=1}^{k}U_{ij}^{2}}
+$$
+
+This is the squared Euclidean norm of row $i$ of $U_k$.
+
+A high leverage score indicates that the cell contributes strongly to the selected singular subspace.
+
+## 3. Sampling cells
+
+We can use leverage scores to define sampling probabilities:
+
+$$
+\boxed{p_i=\frac{\ell_i}{\sum_j \ell_j}=\frac{\ell_i}{k}}
+$$
+
+Cells with higher leverage scores are more likely to be selected.
+
+This helps preserve important directions of variation and can improve the representation of rare cell populations.
+
+However, rare cells are not guaranteed to have high leverage scores, especially if their characteristic directions are excluded from the rank-$k$ approximation.
