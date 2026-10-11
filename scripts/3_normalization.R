@@ -10,3 +10,11 @@ gbm[["Protein"]] <- NormalizeData(
   normalization.method = "CLR",
   margin = 2
 )
+
+
+rna_raw <- LayerData(gbm, assay = "RNA", layer = "counts")
+rna_norm <- LayerData(gbm, assay = "RNA", layer = "data")
+
+
+protein_raw <- LayerData(gbm, assay = "Protein", layer = "counts")
+protein_norm <- LayerData(gbm, assay = "Protein", layer = "data")
