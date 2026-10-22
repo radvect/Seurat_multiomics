@@ -17,3 +17,4 @@ BiocManager::install(
   ask = FALSE
 )
 install.packages("BiocManager")
+install.packages('leidenbase')
