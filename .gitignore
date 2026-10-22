@@ -10,6 +10,7 @@
 .RData
 .Rhistory
 .Rproj.user/
-
+.RDataTmp1
+.RDataTmp
 # Datasets
 data/
