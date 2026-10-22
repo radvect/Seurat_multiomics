@@ -12,5 +12,6 @@
 .Rproj.user/
 .RDataTmp1
 .RDataTmp
+.Rproj
 # Datasets
 data/
