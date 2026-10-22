@@ -1,6 +1,7 @@
 
 #PCA the reduced number of cells based on the Leverage score. 
 #SVG 
+library(Seurat)
 
 
 gbm <- SketchData(object = gbm,

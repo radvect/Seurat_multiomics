@@ -1,5 +1,5 @@
 library(Seurat)
-
+#expression of the RNA higher - > lognormalize
 gbm[["RNA"]] <- NormalizeData(
   gbm[["RNA"]],
   normalization.method = "LogNormalize",

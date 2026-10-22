@@ -1,5 +1,3 @@
-
-
 rna_counts <- LayerData(gbm, assay="Spatial", layer="counts.Gene Expression")
 protein_counts  <- LayerData(gbm, assay="Spatial", layer="counts.Antibody Capture")
 
