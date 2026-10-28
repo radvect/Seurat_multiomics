@@ -1,5 +1,3 @@
-#TODO
-#CHECK THE TILE SIZE
 library(ggplot2)
 library(Seurat)
 

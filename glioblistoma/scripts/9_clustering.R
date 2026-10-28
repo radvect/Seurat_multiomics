@@ -88,7 +88,7 @@ p_protein <- SpatialDimPlot(
   gbm,
   images = "slice1",
   group.by = "Protein_clusters"
-)
+# )
 
 combined <- p_rna + p_protein
 

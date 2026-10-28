@@ -1,0 +1,17 @@
+*.tar.gz
+*.h5
+*.csv
+*.png
+*.json
+*.tiff
+*.jpg
+
+# RStudio
+.RData
+.Rhistory
+.Rproj.user/
+.RDataTmp1
+.RDataTmp
+.Rproj
+# Datasets
+data/
