@@ -56,7 +56,7 @@ ggsave(
 )
 
 saveRDS(seurat_sketch, "data/seurat_sketch.RDS")
-
+# 
 rm(seurat_filtered)
 rm(seurat_sketch)
 rm(p)
