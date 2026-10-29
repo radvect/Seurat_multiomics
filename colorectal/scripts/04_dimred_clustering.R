@@ -181,3 +181,5 @@ ggsave(
   height = 4,
   dpi = 300
 )
+
+saveRDS(seurat_processed, "data/seurat_processed.RDS")

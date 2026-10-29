@@ -2,6 +2,7 @@
 .Rhistory
 .Rproj.user/
 .Ruserdata
+.zip
 
 *.RDS
 *.rds
@@ -9,3 +10,4 @@
 *.h5ad
 *.html
 *.parquet
+*.zip
